@@ -35,15 +35,6 @@ else
   echo "  ~/bin already on PATH in $ZSHRC (skipped)"
 fi
 
-# 4. Remove the old global ~/.zsh_functions sourcing loop from .zshrc
-if grep -q 'zsh_functions' "$ZSHRC"; then
-  sed -i '' '/# --- Custom Functions ---/d' "$ZSHRC"
-  sed -i '' '/zsh_functions/d' "$ZSHRC"
-  echo "  removed ~/.zsh_functions sourcing loop from $ZSHRC"
-else
-  echo "  no ~/.zsh_functions loop found in $ZSHRC (skipped)"
-fi
-
 echo ""
 echo "Done. Run:  source ~/.zshrc"
 echo "Then test:  devtools"
