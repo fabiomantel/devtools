@@ -1,0 +1,73 @@
+#!/usr/bin/env zsh
+# devtools — fzf launcher for developer tools
+#
+# Requires: fzf
+# Sources:  plugins/{claude-sessions,claude-history,git-status-overview,litellm-budget}.zsh
+
+# Resolve the real directory of this script, even when called through a symlink
+_DEVTOOLS_DIR="$(cd "$(dirname "$(readlink -f "$0")")" && pwd)"
+
+command -v fzf &>/dev/null || { echo "Error: fzf is not installed" >&2; exit 1 }
+
+source "$_DEVTOOLS_DIR/plugins/claude-sessions.zsh"     || { echo "Error: missing claude-sessions.zsh" >&2;     exit 1 }
+source "$_DEVTOOLS_DIR/plugins/claude-history.zsh"      || { echo "Error: missing claude-history.zsh" >&2;      exit 1 }
+source "$_DEVTOOLS_DIR/plugins/git-status-overview.zsh" || { echo "Error: missing git-status-overview.zsh" >&2; exit 1 }
+source "$_DEVTOOLS_DIR/plugins/litellm-budget.zsh"      || { echo "Error: missing litellm-budget.zsh" >&2;      exit 1 }
+
+# Show a spinner while a non-interactive command runs, then print its output.
+_devtools_run() {
+  local tmp
+  tmp=$(mktemp)
+
+  local spin_chars='⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏'
+  local spin_label="$1"
+  shift
+
+  # Spinner in background
+  (
+    while true; do
+      for c in ${(s::)spin_chars}; do
+        printf '\r  %s  %s' "$c" "$spin_label"
+        sleep 0.08
+      done
+    done
+  ) &
+  local spin_pid=$!
+
+  # Run the command, capture output
+  "$@" >"$tmp" 2>&1
+  local exit_code=$?
+
+  # Kill spinner and clear the line
+  kill $spin_pid 2>/dev/null
+  wait $spin_pid 2>/dev/null
+  printf '\r\033[K'
+
+  cat "$tmp"
+  rm -f "$tmp"
+  return $exit_code
+}
+
+while true; do
+  choice=$(printf '%s\n' \
+    "Claude Sessions" \
+    "Claude History" \
+    "Git Status" \
+    "LiteLLM Budget" \
+    | fzf \
+        --prompt="devtools > " \
+        --height=40% \
+        --border=rounded \
+        --header="Select a tool  (esc to quit)" \
+        --no-multi)
+
+  [[ -z "$choice" ]] && exit 0
+
+  case "$choice" in
+    "Claude Sessions") _devtools_run "Claude Sessions" claude-sessions ;;
+    "Claude History")  claude-history ;;
+    "Git Status")      _devtools_run "Git Status"      gst ;;
+    "LiteLLM Budget")  _devtools_run "LiteLLM Budget"  budget ;;
+    *) echo "Unknown tool: $choice" >&2; exit 1 ;;
+  esac
+done
