@@ -15,7 +15,7 @@ An fzf-powered CLI launcher for personal developer tools.
 ## Install
 
 ```zsh
-git clone <repo-url> ~/Development/devtools
+git clone https://github.com/fabiomantel/devtools ~/Development/devtools
 cd ~/Development/devtools
 zsh install.sh
 source ~/.zshrc
