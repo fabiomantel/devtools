@@ -31,10 +31,10 @@ An interactive fzf menu appears. Navigate with arrow keys, select with Enter, qu
 
 | Menu item | What it does |
 |---|---|
+| Budget | Show LiteLLM key, user, and team spend vs budget |
+| Git Status | Overview of all local git repos |
 | Claude Sessions | Browse and resume Claude Code sessions |
 | Claude History | View Claude conversation history |
-| Git Status | Overview of all local git repos |
-| LiteLLM Budget | Show API spend vs budget |
 
 ## Adding a plugin
 
