@@ -2,10 +2,25 @@
 # Usage: budget  (or: litellm-budget)
 
 budget() {
+	# Resolve token and base URL — prefer env vars, fall back to ~/.claude/settings.json
+	local settings_file="$HOME/.claude/settings.json"
+	local token="${ANTHROPIC_AUTH_TOKEN}"
+	local base_url="${ANTHROPIC_BASE_URL}"
+
+	if [[ -z "$token" || -z "$base_url" ]] && [[ -f "$settings_file" ]]; then
+		[[ -z "$token"    ]] && token=$(jq -r '.env.ANTHROPIC_AUTH_TOKEN // empty' "$settings_file" 2>/dev/null)
+		[[ -z "$base_url" ]] && base_url=$(jq -r '.env.ANTHROPIC_BASE_URL // empty' "$settings_file" 2>/dev/null)
+	fi
+
+	if [[ -z "$token" ]]; then
+		echo "Error: ANTHROPIC_AUTH_TOKEN not set. Run 'aura login' to authenticate."
+		return 1
+	fi
+
 	local raw
-	raw=$(curl -s -X 'GET' 'https://uai-litellm.internal.unity.com/key/info' \
+	raw=$(curl -s -X 'GET' "${base_url}/key/info" \
 		-H 'accept: application/json' \
-		-H "x-litellm-api-key: $ANTHROPIC_AUTH_TOKEN")
+		-H "Authorization: Bearer $token")
 
 	if [[ -z "$raw" ]]; then
 		echo "Error: no response from LiteLLM API."
