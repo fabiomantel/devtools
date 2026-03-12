@@ -66,10 +66,46 @@ source "$_DEVTOOLS_DIR/plugins/hello.zsh" || { echo "Error: missing hello.zsh" >
 "Hello") hello ;;
 ```
 
+## Chrome Extension
+
+A popup extension that shows all your AI budget usage in one place — LiteLLM, GitHub Copilot, and Cursor.
+
+### Install
+
+1. Open `chrome://extensions/`
+2. Enable **Developer mode** (top-right toggle)
+3. Click **Load unpacked** → select `chrome-extension/`
+
+### Configure
+
+Click the extension icon → **Configure** (first run) or the ⚙️ gear icon:
+
+| Field | Value |
+|---|---|
+| API Base URL | Your `ANTHROPIC_BASE_URL` (e.g. `https://your-litellm-instance.com`) |
+| Auth Token | Your `ANTHROPIC_AUTH_TOKEN` (or run `aura login`) |
+| GitHub Token | Output of `gh auth token` — for Copilot quota |
+
+**Cursor** uses your browser session automatically — just be logged in to [cursor.com](https://cursor.com) in the same Chrome profile.
+
+### What it shows
+
+| Section | Data |
+|---|---|
+| 🤖 LiteLLM | Key spend vs budget, lifetime user spend, team budget — all with progress bars |
+| 🐙 GitHub Copilot | Premium interactions, chat, completions quotas (plan: business) |
+| 🖱️ Cursor | Per-model request usage (fast, premium, etc.) |
+
 ## Structure
 
 ```
 devtools/
+├── chrome-extension/ # Chrome popup extension
+│   ├── manifest.json
+│   ├── popup.html
+│   ├── popup.css
+│   ├── popup.js
+│   └── icons/
 ├── plugins/          # one .zsh file per tool
 │   ├── claude-history.zsh
 │   ├── claude-sessions.zsh

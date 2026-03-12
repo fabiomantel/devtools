@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Dev Budget</title>
+  <link rel="stylesheet" href="popup.css" />
+</head>
+<body>
+<div id="app">
+
+  <!-- Settings -->
+  <div id="settings-view" class="view hidden">
+    <div class="section-label">LiteLLM</div>
+    <div class="field">
+      <label>API Base URL</label>
+      <input type="text" id="base-url" placeholder="https://your-litellm-instance.com" />
+    </div>
+    <div class="field">
+      <label>Auth Token</label>
+      <input type="password" id="token" placeholder="sk-..." />
+    </div>
+
+    <div class="section-label" style="margin-top:12px">GitHub Copilot</div>
+    <div class="field">
+      <label>GitHub Token <span class="dim">(PAT or gh CLI token)</span></label>
+      <input type="password" id="gh-token" placeholder="gho_..." />
+    </div>
+
+    <div class="field-actions">
+      <button id="save-btn" class="btn-primary">Save</button>
+      <button id="cancel-btn" class="btn-ghost">Cancel</button>
+    </div>
+    <div id="settings-error" class="error-msg hidden"></div>
+    <div class="settings-note">Cursor uses your browser session automatically — just be logged in to cursor.com.</div>
+  </div>
+
+  <!-- Main view -->
+  <div id="main-view" class="view hidden">
+    <div class="header">
+      <span class="title">Dev Budget</span>
+      <button id="settings-icon" class="icon-btn" title="Settings">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="3"></circle>
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+        </svg>
+      </button>
+    </div>
+
+    <div id="loading" class="loading hidden">
+      <div class="spinner"></div><span>Loading...</span>
+    </div>
+
+    <div id="error-view" class="error-view hidden">
+      <div class="error-icon">⚠️</div>
+      <div id="error-msg" class="error-text"></div>
+      <button id="retry-btn" class="btn-primary">Retry</button>
+    </div>
+
+    <div id="budget-content" class="hidden"></div>
+
+    <div class="footer">
+      <button id="refresh-btn" class="btn-ghost small">↻ Refresh</button>
+      <span id="last-updated" class="last-updated"></span>
+    </div>
+  </div>
+
+  <!-- Onboarding -->
+  <div id="onboarding-view" class="view">
+    <div class="onboarding">
+      <div class="onboarding-icon">💰</div>
+      <h2>Dev Budget</h2>
+      <p>Monitor LiteLLM, GitHub Copilot, and Cursor usage in one place.</p>
+      <button id="configure-btn" class="btn-primary">Configure</button>
+    </div>
+  </div>
+
+</div>
+<script src="popup.js"></script>
+</body>
+</html>
