@@ -2,7 +2,7 @@
 # devtools — fzf launcher for developer tools
 #
 # Requires: fzf
-# Sources:  plugins/{claude-sessions,claude-history,git-status-overview,litellm-budget}.zsh
+# Sources:  plugins/{claude-sessions,claude-history,git-status-overview,litellm-budget,copilot-budget}.zsh
 
 # Resolve the real directory of this script, even when called through a symlink
 _DEVTOOLS_DIR="$(cd "$(dirname "$(readlink -f "$0")")" && pwd)"
@@ -13,6 +13,7 @@ source "$_DEVTOOLS_DIR/plugins/claude-sessions.zsh"     || { echo "Error: missin
 source "$_DEVTOOLS_DIR/plugins/claude-history.zsh"      || { echo "Error: missing claude-history.zsh" >&2;      exit 1 }
 source "$_DEVTOOLS_DIR/plugins/git-status-overview.zsh" || { echo "Error: missing git-status-overview.zsh" >&2; exit 1 }
 source "$_DEVTOOLS_DIR/plugins/litellm-budget.zsh"      || { echo "Error: missing litellm-budget.zsh" >&2;      exit 1 }
+source "$_DEVTOOLS_DIR/plugins/copilot-budget.zsh"      || { echo "Error: missing copilot-budget.zsh" >&2;      exit 1 }
 
 # Show a spinner while a non-interactive command runs, then print its output.
 _devtools_run() {
@@ -54,6 +55,7 @@ while true; do
     "Claude History" \
     "Git Status" \
     "LiteLLM Budget" \
+    "Copilot Budget" \
     | fzf \
         --prompt="devtools > " \
         --height=40% \
@@ -68,6 +70,7 @@ while true; do
     "Claude History")  claude-history ;;
     "Git Status")      _devtools_run "Git Status"      gst ;;
     "LiteLLM Budget")  _devtools_run "LiteLLM Budget"  budget ;;
+    "Copilot Budget")  _devtools_run "Copilot Budget"  copilot-budget ;;
     *) echo "Unknown tool: $choice" >&2; exit 1 ;;
   esac
 done
