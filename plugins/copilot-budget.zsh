@@ -39,8 +39,15 @@ copilot-budget() {
 	echo ""
 
 	# Iterate over quota snapshots
+	local entitlement unlimited remaining pct_remaining pct_used label value_color
+	local bar_width bar filled empty i
 	for quota_id in premium_interactions chat completions; do
-		local entitlement unlimited remaining pct_remaining pct_used label
+		entitlement=''
+		unlimited=''
+		remaining=''
+		pct_remaining=''
+		pct_used=''
+		label=''
 		entitlement=$(echo "$raw" | jq -r ".quota_snapshots.${quota_id}.entitlement")
 		unlimited=$(echo "$raw"   | jq -r ".quota_snapshots.${quota_id}.unlimited")
 		remaining=$(echo "$raw"   | jq -r ".quota_snapshots.${quota_id}.remaining")
@@ -59,7 +66,6 @@ copilot-budget() {
 
 		pct_used=$(( 100 - pct_remaining ))
 
-		local value_color
 		if [[ "$pct_remaining" -le 10 ]]; then
 			value_color="${red}"
 		elif [[ "$pct_remaining" -le 25 ]]; then
@@ -69,16 +75,21 @@ copilot-budget() {
 		fi
 
 		# Progress bar (30 chars wide)
-		local bar_width=30
-		local filled=$(( pct_used * bar_width / 100 ))
-		local empty=$(( bar_width - filled ))
-		local bar="" i=0
+		bar_width=30
+		filled=$(( pct_used * bar_width / 100 ))
+		empty=$(( bar_width - filled ))
+		bar="" i=0
 		while (( i < filled )); do bar+="█"; (( i++ )); done
 		i=0
 		while (( i < empty  )); do bar+="░"; (( i++ )); done
 
-		echo -e "\t${dim}${label}:${reset} ${value_color}${bold}${remaining}${reset}${dim} / ${entitlement} remaining (${pct_remaining}%)${reset}"
-		echo -e "\t               ${value_color}${bar}${reset} ${dim}${pct_used}% used${reset}"
+		if [[ "$quota_id" == "premium_interactions" ]]; then
+			echo -e "\t${dim}${label}:${reset} ${value_color}${bold}${remaining}${reset}${dim} / ${entitlement} remaining (${pct_remaining}%)${reset}"
+			echo -e "\t               ${value_color}${bar}${reset} ${dim}${pct_used}% used${reset}"
+		else
+			echo -e "\t${dim}${label}:${reset} ${value_color}${bold}${remaining}${reset}${dim} remaining${reset}"
+			echo -e "\t               ${value_color}${bar}${reset}"
+		fi
 	done
 
 	echo ""

@@ -2,7 +2,7 @@
 # devtools — fzf launcher for developer tools
 #
 # Requires: fzf
-# Sources:  plugins/{claude-sessions,claude-history,git-status-overview,litellm-budget,copilot-budget}.zsh
+# Sources:  plugins/{claude-sessions,claude-history,git-status-overview,litellm-budget,copilot-budget,cursor-budget,all-budgets}.zsh
 
 # Resolve the real directory of this script, even when called through a symlink
 _DEVTOOLS_DIR="$(cd "$(dirname "$(readlink -f "$0")")" && pwd)"
@@ -15,6 +15,7 @@ source "$_DEVTOOLS_DIR/plugins/git-status-overview.zsh" || { echo "Error: missin
 source "$_DEVTOOLS_DIR/plugins/litellm-budget.zsh"      || { echo "Error: missing litellm-budget.zsh" >&2;      exit 1 }
 source "$_DEVTOOLS_DIR/plugins/copilot-budget.zsh"      || { echo "Error: missing copilot-budget.zsh" >&2;      exit 1 }
 source "$_DEVTOOLS_DIR/plugins/cursor-budget.zsh"       || { echo "Error: missing cursor-budget.zsh" >&2;       exit 1 }
+source "$_DEVTOOLS_DIR/plugins/all-budgets.zsh"         || { echo "Error: missing all-budgets.zsh" >&2;         exit 1 }
 
 # Show a spinner while a non-interactive command runs, then print its output.
 _devtools_run() {
@@ -52,15 +53,13 @@ _devtools_run() {
 
 while true; do
   choice=$(printf '%s\n' \
+    "Budget" \
+    "Git Status" \
     "Claude Sessions" \
     "Claude History" \
-    "Git Status" \
-    "LiteLLM Budget" \
-    "Copilot Budget" \
-    "Cursor Budget" \
     | fzf \
         --prompt="devtools > " \
-        --height=40% \
+        --height=~100% \
         --border=rounded \
         --header="Select a tool  (esc to quit)" \
         --no-multi)
@@ -71,9 +70,7 @@ while true; do
     "Claude Sessions") _devtools_run "Claude Sessions" claude-sessions ;;
     "Claude History")  claude-history ;;
     "Git Status")      _devtools_run "Git Status"      gst ;;
-    "LiteLLM Budget")  _devtools_run "LiteLLM Budget"  budget ;;
-    "Copilot Budget")  _devtools_run "Copilot Budget"  copilot-budget ;;
-    "Cursor Budget")   _devtools_run "Cursor Budget"   cursor-budget ;;
+    "Budget")          _devtools_run "Budget"          all-budgets ;;
     *) echo "Unknown tool: $choice" >&2; exit 1 ;;
   esac
 done
